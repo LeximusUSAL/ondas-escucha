@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Democratizar la escucha · Ondas 1925–1939</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --dark:  #111111;
+      --card:  #1a1a1a;
+      --gold:  #c9a84c;
+      --gold2: #e8c97a;
+      --text:  #e8e8e8;
+      --muted: #9a9a9a;
+      --white: #ffffff;
+      --serif: 'Georgia', 'Times New Roman', serif;
+      --sans:  'Helvetica Neue', Arial, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+    body { background: var(--black); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+      background: var(--gold); z-index: 1000; transition: width 0.15s ease;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; pointer-events: all; }
+    .nav-logo  { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); }
+    .nav-sep   { color: var(--gold); opacity: 0.5; }
+    .nav-title { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
+
+    #slide-nav {
+      position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+      z-index: 800; display: flex; flex-direction: column; gap: 9px; pointer-events: all;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.3s ease; }
+    .dot.active { background: var(--gold); transform: scale(1.5); }
+    .dot:hover  { background: rgba(255,255,255,0.6); }
+
+    section { scroll-snap-align: start; min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+
+    /* ── HERO ── */
+    #hero { overflow: hidden; background: var(--black); }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('images/000.webp');
+      background-size: cover; background-position: center 30%;
+      filter: brightness(0.32) saturate(0.6);
+      transform: scale(1.04); transition: transform 8s ease;
+    }
+    #hero:hover .hero-bg { transform: scale(1); }
+
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.0) 40%, rgba(10,10,10,0.9) 85%, var(--black) 100%);
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 760px; padding: 80px 48px 60px; text-align: center; }
+
+    .hero-eyebrow { font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
+
+    .hero-title {
+      font-family: var(--serif); font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 400; line-height: 1.05; color: var(--white); margin-bottom: 32px; letter-spacing: -0.01em;
+    }
+    .hero-title em { font-style: italic; color: var(--gold2); }
+
+    .hero-subtitle {
+      font-size: 15px; line-height: 1.75; color: rgba(232,232,232,0.75);
+      max-width: 520px; margin: 0 auto 48px; font-family: var(--serif); font-style: italic;
+    }
+
+    .hero-meta { display: flex; align-items: center; justify-content: center; gap: 24px; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); }
+
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+      animation: fadeInUp 2s ease 1.5s both;
+    }
+    .scroll-arrow { width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--gold)); animation: scrollLine 2s ease-in-out infinite; }
+
+    @keyframes scrollLine {
+      0%, 100% { transform: scaleY(0.3); opacity: 0.4; transform-origin: top; }
+      50%       { transform: scaleY(1);   opacity: 1;   transform-origin: top; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ── INTRO ── */
+    #intro { background: var(--dark); justify-content: flex-start; align-items: stretch; }
+
+    .intro-inner { width: 100%; display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+
+    .intro-image-col { position: relative; overflow: hidden; }
+    .intro-image-col img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: brightness(0.6) saturate(0.75); }
+    .intro-image-overlay { position: absolute; inset: 0; background: linear-gradient(to right, transparent 60%, var(--dark) 100%); }
+
+    .intro-text-col { display: flex; flex-direction: column; justify-content: center; padding: 80px 64px 80px 48px; }
+
+    .section-number { font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; opacity: 0.8; }
+    .section-label  { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 32px; border-left: 2px solid var(--gold); padding-left: 16px; }
+
+    .section-heading { font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 400; line-height: 1.2; color: var(--white); margin-bottom: 28px; }
+    .section-body { font-family: var(--serif); font-size: 15.5px; line-height: 1.85; color: rgba(232,232,232,0.78); max-width: 520px; }
+    .section-body p + p { margin-top: 18px; }
+
+    /* ── SLIDES ── */
+    .slide { background: var(--black); overflow: hidden; flex-direction: column; }
+
+    .slide-inner { position: relative; width: 100%; min-height: 100vh; display: grid; }
+    .slide-inner.layout-a { grid-template-columns: 58% 42%; }
+    .slide-inner.layout-b { grid-template-columns: 42% 58%; }
+
+    .slide-image { position: relative; overflow: hidden; }
+    .slide-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; transition: transform 10s ease; }
+    .slide:hover .slide-image img { transform: scale(1.04); }
+
+    .slide-image-vignette { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.0) 50%); }
+    .layout-b .slide-image-vignette { background: linear-gradient(-135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.0) 50%); }
+
+    .slide-text { display: flex; flex-direction: column; justify-content: center; padding: 72px 56px; background: var(--card); position: relative; }
+    .layout-b .slide-text { order: -1; background: var(--dark); }
+
+    .slide-date  { font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .slide-num   { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; }
+
+    .slide-title { font-family: var(--serif); font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 400; line-height: 1.25; color: var(--white); margin-bottom: 24px; }
+    .slide-body  { font-family: var(--serif); font-size: 14.5px; line-height: 1.85; color: rgba(232,232,232,0.72); max-width: 440px; }
+    .slide-body p + p { margin-top: 14px; }
+
+    .slide-caption { margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .slide-caption-text { font-size: 10px; color: var(--muted); line-height: 1.5; font-style: italic; }
+
+    /* ── CODA ── */
+    #coda { background: var(--dark); border-top: 1px solid rgba(255,255,255,0.05); }
+
+    .coda-inner { text-align: center; padding: 80px 48px; max-width: 700px; margin: 0 auto; }
+    .coda-icon  { font-size: 32px; margin-bottom: 32px; opacity: 0.6; }
+    .coda-title { font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 400; color: var(--white); margin-bottom: 24px; line-height: 1.2; }
+    .coda-body  { font-family: var(--serif); font-size: 15px; line-height: 1.8; color: rgba(232,232,232,0.7); margin-bottom: 40px; }
+
+    .coda-link { display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; transition: all 0.25s ease; }
+    .coda-link:hover { background: var(--gold); color: var(--black); }
+    .coda-link svg { width: 14px; height: 14px; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--black); border-top: 1px solid rgba(255,255,255,0.05); padding: 40px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+    .footer-left { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); line-height: 1.8; }
+    .footer-left strong { display: block; color: var(--gold); margin-bottom: 4px; letter-spacing: 0.3em; }
+    .footer-right { font-size: 10px; color: var(--muted); text-align: right; line-height: 1.8; }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.35s; }
+
+    .gold-line { display: block; width: 40px; height: 1px; background: var(--gold); margin: 20px 0; opacity: 0.6; }
+
+    @media (max-width: 768px) {
+      .intro-inner, .slide-inner.layout-a, .slide-inner.layout-b { grid-template-columns: 1fr; }
+      .intro-image-col { min-height: 40vh; }
+      .slide-image     { min-height: 45vh; }
+      .layout-b .slide-text { order: unset; }
+      .slide-text, .intro-text-col { padding: 48px 28px; }
+      nav { padding: 14px 20px; }
+      #slide-nav { display: none; }
+      .hero-content { padding: 80px 24px 60px; }
+      footer { flex-direction: column; }
+      .footer-right { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav>
+  <div class="nav-brand">
+    <span class="nav-logo">Ondas · 1925–1939</span>
+    <span class="nav-sep">—</span>
+    <span class="nav-title">Itinerario 4</span>
+  </div>
+</nav>
+
+<div id="slide-nav">
+  <div class="dot active" data-target="hero"      title="Inicio"></div>
+  <div class="dot"        data-target="intro"     title="Democratización de la escucha"></div>
+  <div class="dot"        data-target="slide-001" title="Cueva de Colorado, 1930"></div>
+  <div class="dot"        data-target="slide-002" title="Anciana en Nápoles, 1930"></div>
+  <div class="dot"        data-target="slide-003" title="Playas inglesas, 1926"></div>
+  <div class="dot"        data-target="slide-004" title="Familia en Nueva York, 1925"></div>
+  <div class="dot"        data-target="slide-005" title="Hospital en Chicago, 1926"></div>
+  <div class="dot"        data-target="slide-006" title="Azotea de Berlín, 1927"></div>
+  <div class="dot"        data-target="slide-007" title="Nueva York–Los Ángeles, 1933"></div>
+  <div class="dot"        data-target="slide-008" title="Un oso, 1926"></div>
+  <div class="dot"        data-target="slide-009" title="Familia inuit, 1929"></div>
+  <div class="dot"        data-target="coda"      title="Explorar más"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow reveal">Itinerario 4 · Exposición Ondas</p>
+    <h1 class="hero-title reveal reveal-delay-1">
+      Democratizar<br>la <em>escucha</em>
+    </h1>
+    <p class="hero-subtitle reveal reveal-delay-2">
+      Desde príncipes a estrellas de cine, de las cuevas de Colorado al Ártico:
+      la radio convierte la música en un derecho universal.
+    </p>
+    <div class="hero-meta reveal reveal-delay-3">
+      <span>1925 — 1933</span>
+      <span>·</span>
+      <span>Revista Ondas</span>
+      <span>·</span>
+      <span>9 imágenes</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-arrow"></div>
+    <span>Desplaza</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     000 — INTRO
+══════════════════════════════════════════ -->
+<section id="intro">
+  <div class="intro-inner">
+    <div class="intro-image-col">
+      <img src="images/000.webp" alt="C. Bell escuchando conciertos radiados, 1932">
+      <div class="intro-image-overlay"></div>
+    </div>
+    <div class="intro-text-col">
+      <p class="section-number reveal">000</p>
+      <p class="section-label reveal reveal-delay-1">Democratización de la escucha</p>
+      <h2 class="section-heading reveal reveal-delay-2">
+        Todos los lugares,<br>todas las clases sociales
+      </h2>
+      <span class="gold-line reveal reveal-delay-2"></span>
+      <div class="section-body reveal reveal-delay-3">
+        <p>
+          Desde príncipes a estrellas de cine, pasando por familias o personas desconocidas:
+          todo el mundo, en todos los lugares, de todas las clases sociales, puede acceder
+          a la nueva escucha radiofónica.
+        </p>
+        <p>
+          Esta es la idea que quiere transmitir la iconografía de <em>Ondas</em>. En muchas
+          de estas imágenes se hace explícito que lo que se está escuchando es «un concierto».
+          La música, protagonista directa de esta nueva escucha, se muestra desde sus primeros
+          años como un espacio democratizador de la cultura.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     001 — Cueva de Colorado (1930)
+══════════════════════════════════════════ -->
+<section id="slide-001" class="slide">
+  <div class="slide-inner layout-a">
+    <div class="slide-image">
+      <img src="images/001.webp" alt="Escuchando un concierto en una cueva de Colorado, 1930">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">001</p>
+      <p class="slide-date reveal">30 de mayo de 1930</p>
+      <h2 class="slide-title reveal reveal-delay-1">Escuchando un concierto en una cueva de Colorado</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          Cualquier lugar es válido para escuchar un concierto: esta cueva de los Vientos
+          en Colorado en 1930, una anciana en Nápoles, trenes, aviones, autobuses, playas…
+        </p>
+        <p>
+          La escucha radiofónica aparece en todos los rincones posibles. <em>Ondas</em>
+          fotografía y difunde cada uno de ellos para animar al nuevo lector español
+          a estas prácticas del mundo global: normalizar la idea de que en cualquier
+          sitio se puede encender la radio.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Cueva de los Vientos, Colorado · <em>Ondas</em>, 30 may. 1930</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     002 — Anciana en Nápoles (1930)
+══════════════════════════════════════════ -->
+<section id="slide-002" class="slide">
+  <div class="slide-inner layout-b">
+    <div class="slide-image">
+      <img src="images/002.webp" alt="Anciana escuchando un concierto en una aldea de Nápoles, 1930">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">002</p>
+      <p class="slide-date reveal">15 de noviembre de 1930</p>
+      <h2 class="slide-title reveal reveal-delay-1">Anciana en Nápoles escuchando un concierto</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          Desde la calle, en un contexto mucho más humilde que el de una estrella de cine
+          en su hogar, una anciana escucha un concierto. La imagen es especialmente bella:
+          une distintas generaciones en esa escucha atenta de la mujer junto a dos pequeños,
+          uno de ellos descalzo.
+        </p>
+        <p>
+          La clase social no importa. La radio llega igualmente. La democratización cultural
+          adquiere aquí su plano más humano y conmovedor.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Aldea de Nápoles · <em>Ondas</em>, 15 nov. 1930</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     003 — Playas inglesas (1926)
+══════════════════════════════════════════ -->
+<section id="slide-003" class="slide">
+  <div class="slide-inner layout-a">
+    <div class="slide-image">
+      <img src="images/003.webp" alt="Escuchando un concierto en las playas inglesas, 1926">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">003</p>
+      <p class="slide-date reveal">17 de octubre de 1926</p>
+      <h2 class="slide-title reveal reveal-delay-1">Playas inglesas</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          En contraste con la humildad de la imagen anterior, la elegancia de estos
+          radioyentes en una playa inglesa. Una imagen muy cuidada, con una perspectiva
+          diagonal que enfatiza la presencia del aparato receptor en una ubicación tan
+          original como la orilla del mar.
+        </p>
+        <p>
+          La música radiofónica no solo democratiza el acceso cultural, sino que se
+          convierte también en el centro del ocio estival: un acompañante imprescindible
+          para cualquier momento del día.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Playa inglesa · <em>Ondas</em>, 17 oct. 1926</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     004 — Familia en Nueva York (1925)
+══════════════════════════════════════════ -->
+<section id="slide-004" class="slide">
+  <div class="slide-inner layout-b">
+    <div class="slide-image">
+      <img src="images/004.webp" alt="Familia de M. Rothapfel escuchando un concierto del teatro Capitol de Nueva York, 1925">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">004</p>
+      <p class="slide-date reveal">4 de octubre de 1925</p>
+      <h2 class="slide-title reveal reveal-delay-1">Escucha en familia en Nueva York</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          Nápoles, cuevas de Colorado, playas inglesas, Nueva York: en todos los sitios
+          se escucha la radio, y también en familia. La familia del famoso M. Rothapfel,
+          inventor de varios aparatos de radio, escucha uno de los conciertos retransmitidos
+          del teatro Capitol de Nueva York.
+        </p>
+        <p>
+          La escena doméstica, con los niños y hasta el perro atentos al aparato receptor,
+          refuerza la idea de la radio como nuevo centro de la vida familiar.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Familia Rothapfel, Nueva York · <em>Ondas</em>, 4 oct. 1925</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     005 — Hospital en Chicago (1926)
+══════════════════════════════════════════ -->
+<section id="slide-005" class="slide">
+  <div class="slide-inner layout-a">
+    <div class="slide-image">
+      <img src="images/005.webp" alt="Enfermo en hospital escuchando un concierto, Chicago, 1926">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">005</p>
+      <p class="slide-date reveal">8 de noviembre de 1926</p>
+      <h2 class="slide-title reveal reveal-delay-1">Radio, música y terapia</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          Dentro de esa idea de ampliar los espacios de escucha, el hospital aparece
+          también con frecuencia en <em>Ondas</em>. La escucha musical se presenta como
+          una forma de terapia: los pacientes pueden sobrellevar de manera más tranquila
+          la difícil vida hospitalaria gracias a la música radiada desde Chicago.
+        </p>
+        <p>
+          La radio alcanza incluso donde el cuerpo no puede moverse. La escucha
+          se convierte en una forma de libertad.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Hospital, Chicago · <em>Ondas</em>, 8 nov. 1926</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     006 — Azotea de Berlín (1927)
+══════════════════════════════════════════ -->
+<section id="slide-006" class="slide">
+  <div class="slide-inner layout-b">
+    <div class="slide-image">
+      <img src="images/006.webp" alt="Mujeres escuchando la radio en una azotea de Berlín, 1927">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">006</p>
+      <p class="slide-date reveal">17 de julio de 1927</p>
+      <h2 class="slide-title reveal reveal-delay-1">Modernidad en la escucha urbana</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          Desde una azotea de Berlín, un grupo de mujeres escucha la radio mientras toman
+          el sol en ropa de verano. Una imagen moderna: mujeres dueñas de su cuerpo y de
+          su ocio, con una nueva manera de estar en el espacio urbano donde la radio y
+          la música son el centro del evento.
+        </p>
+        <p>
+          El pie de foto de la revista, con su comentario sobre «cuatro jóvenes muy
+          agraciadas», revela también las tensiones de género de la época: esa escucha
+          desenfadada parecía necesitar justificarse por la belleza de quienes la practicaban.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Azotea de Berlín · <em>Ondas</em>, 17 jul. 1927</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     007 — Nueva York–Los Ángeles (1933)
+══════════════════════════════════════════ -->
+<section id="slide-007" class="slide">
+  <div class="slide-inner layout-a">
+    <div class="slide-image">
+      <img src="images/007.webp" alt="Escuchando y bailando en el autobús de Nueva York a Los Ángeles, 1933">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">007</p>
+      <p class="slide-date reveal">14 de octubre de 1933</p>
+      <h2 class="slide-title reveal reveal-delay-1">Escuchar y bailar de Nueva York a Los Ángeles</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          La nueva escucha a veces deriva en movimiento y baile. Los largos viajes
+          se hacen más amenos gracias a la radio, que crea incluso lugares de baile
+          espontáneo en los angostos pasillos de un autobús.
+        </p>
+        <p>
+          La música ya no necesita una sala de conciertos ni un escenario. Surge allí
+          donde haya un receptor y ganas de escuchar —y de moverse.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Autobús Nueva York–Los Ángeles · <em>Ondas</em>, 14 oct. 1933</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     008 — Un oso (1926)
+══════════════════════════════════════════ -->
+<section id="slide-008" class="slide">
+  <div class="slide-inner layout-b">
+    <div class="slide-image">
+      <img src="images/008.webp" alt="Un oso escuchando un concierto de radio, 1926">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">008</p>
+      <p class="slide-date reveal">12 de septiembre de 1926</p>
+      <h2 class="slide-title reveal reveal-delay-1">Animales protagonistas</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          Como en otras secciones de esta exposición, los animales forman también parte
+          de la iconografía musical de <em>Ondas</em>. Esta vez es un oso el que se acerca
+          con expectación a escuchar un concierto radiofónico.
+        </p>
+        <p>
+          Gallinas, focas, perros, leones, osos: todos aparecen en la revista aparentemente
+          «fascinados» por esta nueva tecnología. La radio se muestra así tan natural y
+          accesible que ni siquiera los animales le tienen miedo.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Oso ante el receptor de radio · <em>Ondas</em>, 12 sep. 1926</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     009 — Familia inuit (1929)
+══════════════════════════════════════════ -->
+<section id="slide-009" class="slide">
+  <div class="slide-inner layout-a">
+    <div class="slide-image">
+      <img src="images/009.webp" alt="Familia inuit escuchando un concierto de radio, Ártico, 1929">
+      <div class="slide-image-vignette"></div>
+    </div>
+    <div class="slide-text">
+      <p class="slide-num reveal">009</p>
+      <p class="slide-date reveal">7 de septiembre de 1929</p>
+      <h2 class="slide-title reveal reveal-delay-1">Familia inuit escuchando un concierto</h2>
+      <span class="gold-line reveal reveal-delay-1"></span>
+      <div class="slide-body reveal reveal-delay-2">
+        <p>
+          El viaje termina en el Ártico. Una familia, en uno de los espacios considerados
+          entonces como los más remotos del mundo, se reúne en torno a la radio igual que
+          cualquier familia española. Según el pie de foto original, se disponen a comer
+          mientras oyen un concierto de sobremesa emitido por una estación estadounidense.
+        </p>
+        <p>
+          La democratización de la cultura, en esta iconografía, se presenta como algo
+          ya completado: el mismo sonido llega a todos los rincones del planeta.
+        </p>
+      </div>
+      <div class="slide-caption reveal reveal-delay-3">
+        <div class="slide-caption-text">Familia inuit, Ártico · <em>Ondas</em>, 7 sep. 1929</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CODA
+══════════════════════════════════════════ -->
+<section id="coda">
+  <div class="coda-inner">
+    <div class="coda-icon reveal">◈</div>
+    <h2 class="coda-title reveal reveal-delay-1">
+      Seguir explorando<br>«escucha» y «escuchando»
+    </h2>
+    <p class="coda-body reveal reveal-delay-2">
+      Con las palabras clave <strong>«escucha»</strong> o <strong>«escuchando»</strong>
+      puedes explorar otras imágenes de esta categoría en nuestro repositorio: más ejemplos
+      de iconografía musical en <em>Ondas</em> donde la globalización y la democratización
+      son los elementos centrales del discurso.
+    </p>
+    <a href="https://leximususal.github.io/MUSLYME/exposicion_ondas_index.html"
+       class="coda-link reveal reveal-delay-3" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M8 2.5l5 5.5-5 5.5M3 8h10"/>
+      </svg>
+      Explorar el repositorio
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <strong>LexiMus · Universidad de Salamanca</strong>
+    Léxico y ontología de la música en español<br>
+    PID2022-139589NB-C33
+  </div>
+  <div class="footer-right">
+    Fuente: Revista <em>Ondas</em>, Hemeroteca Nacional de España<br>
+    Itinerario 4 de 5 · Democratizar la escucha
+  </div>
+</footer>
+
+<script>
+  const progressBar = document.getElementById('progress-bar');
+
+  function updateProgress() {
+    const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    progressBar.style.width = pct + '%';
+  }
+
+  const dots = document.querySelectorAll('.dot');
+  const sections = ['hero','intro','slide-001','slide-002','slide-003','slide-004',
+                    'slide-005','slide-006','slide-007','slide-008','slide-009','coda'];
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const el = document.getElementById(dot.dataset.target);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  function updateActiveDot() {
+    const mid = window.scrollY + window.innerHeight * 0.4;
+    let active = 0;
+    sections.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= mid) active = i;
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === active));
+  }
+
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    }),
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  window.addEventListener('scroll', () => { updateProgress(); updateActiveDot(); }, { passive: true });
+  updateProgress();
+  updateActiveDot();
+
+  document.querySelectorAll('#hero .reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * 180);
+  });
+</script>
+</body>
+</html>
